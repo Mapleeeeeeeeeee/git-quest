@@ -31,7 +31,7 @@ function setup() {
   // Add git-quest entry
   (config.mcpServers as Record<string, unknown>)["git-quest"] = {
     command: "npx",
-    args: ["-y", "git-quest"],
+    args: ["-y", "@maplekuo/git-quest"],
   };
 
   // Write config

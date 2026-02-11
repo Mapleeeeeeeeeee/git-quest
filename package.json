@@ -1,6 +1,6 @@
 {
-  "name": "git-quest",
-  "version": "0.1.0",
+  "name": "@maplekuo/git-quest",
+  "version": "0.1.1",
   "type": "module",
   "description": "Turn your codebase into an RPG — an MCP server for GitHub Copilot CLI that gamifies repo maintenance",
   "main": "dist/index.js",
