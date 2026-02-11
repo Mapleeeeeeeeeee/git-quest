@@ -1,11 +1,12 @@
 {
   "name": "@maplekuo/git-quest",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "Turn your codebase into an RPG — an MCP server for GitHub Copilot CLI that gamifies repo maintenance",
   "main": "dist/index.js",
   "bin": {
-    "git-quest": "./dist/bin/setup.js"
+    "git-quest": "./dist/index.js",
+    "git-quest-setup": "./dist/bin/setup.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig.bin.json",
