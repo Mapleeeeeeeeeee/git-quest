@@ -1,0 +1,41 @@
+{
+  "name": "git-quest",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Turn your codebase into an RPG — an MCP server for GitHub Copilot CLI that gamifies repo maintenance",
+  "main": "dist/index.js",
+  "bin": {
+    "git-quest": "./dist/bin/setup.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.bin.json",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "github-copilot",
+    "copilot-cli",
+    "gamification",
+    "code-quality",
+    "developer-tools"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anthropics/git-quest"
+  },
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "latest"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0"
+  }
+}
