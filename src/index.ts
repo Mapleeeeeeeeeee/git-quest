@@ -3,7 +3,9 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { readFile } from "node:fs/promises";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { homedir } from "node:os";
 
 import { MissingDocsScanner } from "./scanners/missing-docs.js";
 import { TodoHunterScanner } from "./scanners/todo-hunter.js";
@@ -19,6 +21,51 @@ import {
   formatPlayerStats,
   formatQuestLog,
 } from "./utils/quest-formatter.js";
+
+// Handle "setup" subcommand before starting the MCP server
+if (process.argv.includes("setup")) {
+  const CONFIG_DIR = join(homedir(), ".copilot");
+  const CONFIG_FILE = join(CONFIG_DIR, "mcp-config.json");
+
+  if (!existsSync(CONFIG_DIR)) {
+    mkdirSync(CONFIG_DIR, { recursive: true });
+  }
+
+  let config: Record<string, unknown> = {};
+  if (existsSync(CONFIG_FILE)) {
+    try {
+      config = JSON.parse(readFileSync(CONFIG_FILE, "utf-8"));
+    } catch {
+      // If config is corrupted, start fresh
+    }
+  }
+
+  if (!config.mcpServers || typeof config.mcpServers !== "object") {
+    config.mcpServers = {};
+  }
+
+  (config.mcpServers as Record<string, unknown>)["git-quest"] = {
+    command: "npx",
+    args: ["-y", "-p", "@maplekuo/git-quest", "git-quest"],
+  };
+
+  writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2), "utf-8");
+
+  console.log(`
+🎮 git-quest setup complete!
+
+✅ Registered as MCP server for GitHub Copilot CLI.
+
+Next steps:
+  1. Open a terminal in any project directory
+  2. Run: copilot
+  3. Say: "scan this repo for quests"
+  4. Complete quests to earn XP and level up! ⚔️
+
+Happy adventuring! 🐉
+`);
+  process.exit(0);
+}
 
 const scanners: Record<string, Scanner> = {
   "missing-docs": new MissingDocsScanner(),
@@ -377,7 +424,7 @@ server.tool(
   },
 );
 
-// Start server
+// Start MCP server
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
