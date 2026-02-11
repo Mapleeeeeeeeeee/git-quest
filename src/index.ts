@@ -40,8 +40,8 @@ async function verifyMissingDocs(
     if (targetLine < 0) return false;
 
     // Search around original line (±5) for the export
-    const searchStart = Math.max(0, targetLine - 5);
-    const searchEnd = Math.min(lines.length, targetLine + 6);
+    const searchStart = Math.max(0, targetLine - 10);
+    const searchEnd = Math.min(lines.length, targetLine + 15);
 
     for (let i = searchStart; i < searchEnd; i++) {
       if (/^export\s+/.test(lines[i])) {
@@ -88,8 +88,8 @@ async function verifyTodoHunter(
     const targetLine = quest.line ? quest.line - 1 : -1;
 
     // Search around original line (±5) for the TODO/FIXME/HACK/XXX
-    const searchStart = Math.max(0, targetLine - 5);
-    const searchEnd = Math.min(lines.length, targetLine + 6);
+    const searchStart = Math.max(0, targetLine - 10);
+    const searchEnd = Math.min(lines.length, targetLine + 15);
 
     for (let i = searchStart; i < searchEnd; i++) {
       if (/\/\/\s*(TODO|FIXME|HACK|XXX)\s*:?\s*/i.test(lines[i])) {
