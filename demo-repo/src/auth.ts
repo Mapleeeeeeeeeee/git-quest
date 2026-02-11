@@ -11,8 +11,8 @@ export function validateToken(token: string, secret: string): boolean {
 }
 
 /**
- * Generates a base64-encoded token containing the user's id and issued-at timestamp.
- * @param {string} userId - The ID of the user to include in the token payload.
+ * Generates a base64-encoded token containing the user ID and issued-at timestamp.
+ * @param {string} userId - The ID of the user included in the token payload.
  * @param {string} secret - The signing secret (currently stored in the payload for validation).
  * @returns {string} The base64-encoded token string.
  */
