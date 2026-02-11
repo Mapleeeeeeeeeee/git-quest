@@ -5,7 +5,7 @@ export interface ScanResult {
   filePath: string;
   line?: number;
   scanner: string;
-  difficulty: 1 | 2 | 3;
+  difficulty: 1 | 2 | 3 | 4;
   xp: number;
   hint: string;
 }

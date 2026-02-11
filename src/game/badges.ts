@@ -49,6 +49,14 @@ export const BADGES: Badge[] = [
       state.completedQuests.some((q) => q.difficulty === 3),
   },
   {
+    id: "boss-slayer",
+    name: "Boss Slayer",
+    icon: "👑",
+    description: "Complete a Boss Quest",
+    condition: (state) =>
+      state.completedQuests.some((q) => q.scanner === "boss"),
+  },
+  {
     id: "perfectionist",
     name: "Perfectionist",
     icon: "✨",

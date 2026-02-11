@@ -7,6 +7,7 @@ import { join, resolve } from "node:path";
 import { MissingDocsScanner } from "./scanners/missing-docs.js";
 import { TodoHunterScanner } from "./scanners/todo-hunter.js";
 import { MissingTestsScanner } from "./scanners/missing-tests.js";
+import { generateBossQuests } from "./scanners/boss-quest.js";
 import { GameState } from "./game/state.js";
 import type { ScanResult, Scanner } from "./scanners/types.js";
 import {
@@ -29,6 +30,7 @@ const scanners: Record<string, Scanner> = {
 async function verifyMissingDocs(
   quest: ScanResult,
   rootDir: string,
+  _gameState: GameState,
 ): Promise<boolean> {
   try {
     const content = await readFile(join(rootDir, quest.filePath), "utf-8");
@@ -77,6 +79,7 @@ async function verifyMissingDocs(
 async function verifyTodoHunter(
   quest: ScanResult,
   rootDir: string,
+  _gameState: GameState,
 ): Promise<boolean> {
   try {
     const content = await readFile(join(rootDir, quest.filePath), "utf-8");
@@ -112,6 +115,7 @@ async function verifyTodoHunter(
 async function verifyMissingTests(
   quest: ScanResult,
   rootDir: string,
+  _gameState: GameState,
 ): Promise<boolean> {
   const { access } = await import("node:fs/promises");
   const { basename, dirname } = await import("node:path");
@@ -148,13 +152,27 @@ async function verifyMissingTests(
   return false;
 }
 
+async function verifyBoss(
+  quest: ScanResult,
+  rootDir: string,
+  gameState: GameState,
+): Promise<boolean> {
+  // All quests for this file must be completed
+  const lastScan = gameState.lastScanResults;
+  const fileQuests = lastScan.filter(
+    (q) => q.filePath === quest.filePath && q.scanner !== "boss",
+  );
+  return fileQuests.every((q) => gameState.isQuestCompleted(q.id));
+}
+
 const verifiers: Record<
   string,
-  (quest: ScanResult, rootDir: string) => Promise<boolean>
+  (quest: ScanResult, rootDir: string, gameState: GameState) => Promise<boolean>
 > = {
   "missing-docs": verifyMissingDocs,
   "todo-hunter": verifyTodoHunter,
   "missing-tests": verifyMissingTests,
+  "boss": verifyBoss,
 };
 
 // --- MCP Server ---
@@ -195,6 +213,10 @@ server.tool(
 
     // Sort by difficulty (low to high)
     allResults.sort((a, b) => a.difficulty - b.difficulty);
+
+    // Generate boss quests from combined results
+    const bossQuests = generateBossQuests(allResults);
+    allResults.push(...bossQuests);
 
     // Save state
     const gameState = new GameState(rootDir);
@@ -296,7 +318,7 @@ server.tool(
       };
     }
 
-    const passed = await verifier(quest, rootDir);
+    const passed = await verifier(quest, rootDir, gameState);
 
     if (passed) {
       const result = gameState.completeQuest(quest);

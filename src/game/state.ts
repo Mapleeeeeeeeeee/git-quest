@@ -7,7 +7,7 @@ import { checkNewBadges, type Badge } from "./badges.js";
 export interface CompletedQuest {
   id: string;
   scanner: string;
-  difficulty: 1 | 2 | 3;
+  difficulty: 1 | 2 | 3 | 4;
   xp: number;
   completedAt: string;
 }

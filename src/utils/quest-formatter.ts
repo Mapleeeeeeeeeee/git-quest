@@ -8,12 +8,14 @@ const SCANNER_EMOJI: Record<string, string> = {
   "missing-docs": "📜",
   "todo-hunter": "🔍",
   "missing-tests": "🐉",
+  "boss": "👑",
 };
 
 const DIFFICULTY_STARS: Record<number, string> = {
   1: "★☆☆",
   2: "★★☆",
   3: "★★★",
+  4: "★★★★",
 };
 
 function progressBar(percent: number, width = 10): string {
@@ -39,15 +41,34 @@ export function formatQuestBoard(
   );
   lines.push("─".repeat(50));
 
-  for (let i = 0; i < quests.length; i++) {
-    const q = quests[i];
+  const regularQuests = quests.filter((q) => q.scanner !== "boss");
+  const bossQuests = quests.filter((q) => q.scanner === "boss");
+
+  for (let i = 0; i < regularQuests.length; i++) {
+    const q = regularQuests[i];
+    const questNum = quests.indexOf(q) + 1;
     const emoji = SCANNER_EMOJI[q.scanner] || "❓";
     const stars = DIFFICULTY_STARS[q.difficulty] || "???";
     lines.push("");
-    lines.push(`[Quest #${i + 1}] ${stars} ${emoji} "${q.title}"`);
+    lines.push(`[Quest #${questNum}] ${stars} ${emoji} "${q.title}"`);
     lines.push(`  → ${q.description}`);
     lines.push(`  → Reward: +${q.xp} XP`);
     lines.push(`  → Hint: ${q.hint}`);
+  }
+
+  if (bossQuests.length > 0) {
+    lines.push("");
+    lines.push("─".repeat(50));
+    lines.push("👑 BOSS QUESTS");
+    lines.push("─".repeat(50));
+    for (const q of bossQuests) {
+      const questNum = quests.indexOf(q) + 1;
+      lines.push("");
+      lines.push(`[Quest #${questNum}] ★★★★ 👑 "${q.title}"`);
+      lines.push(`  → ${q.description}`);
+      lines.push(`  → Reward: +${q.xp} XP`);
+      lines.push(`  → Hint: ${q.hint}`);
+    }
   }
 
   lines.push("");
